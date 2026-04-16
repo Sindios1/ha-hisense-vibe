@@ -2,12 +2,15 @@
 from __future__ import annotations
 
 import logging
+import json
+import ssl
+import paho.mqtt.client as mqtt
 import voluptuous as vol
 from homeassistant import config_entries
 from homeassistant.core import callback
 from homeassistant.data_entry_flow import FlowResult
 
-from .const import DOMAIN
+from .const import DOMAIN, CERT_PEM, DEFAULT_USER, DEFAULT_PASS, DEFAULT_PORT
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -21,6 +24,26 @@ class HisenseVibeConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         self.host = None
         self.mac = None
 
+    def _trigger_pin(self, host):
+        """Connect to TV and trigger the PIN display."""
+        try:
+            client = mqtt.Client(client_id="HomeAssistantVibePair")
+            client.username_pw_set(DEFAULT_USER, DEFAULT_PASS)
+            
+            context = ssl.create_default_context(ssl.Purpose.SERVER_AUTH)
+            context.check_hostname = False
+            context.verify_mode = ssl.CERT_NONE
+            client.tls_set_context(context)
+            
+            client.connect(host, DEFAULT_PORT)
+            # Standard topic to trigger PIN display
+            client.publish("/remoteapp/tv/ui_service/HomeAssistant/actions/get_pin", "{}")
+            client.disconnect()
+            return True
+        except Exception as ex:
+            _LOGGER.error("Failed to trigger Hisense PIN: %s", ex)
+            return False
+
     async def async_step_user(self, user_input=None) -> FlowResult:
         """Handle the initial step."""
         errors = {}
@@ -28,8 +51,11 @@ class HisenseVibeConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             self.host = user_input["host"]
             self.mac = user_input["mac"]
             
-            # Move to pairing step
-            return await self.async_step_pair()
+            # Try to trigger PIN display on the TV
+            if await self.hass.async_add_executor_job(self._trigger_pin, self.host):
+                return await self.async_step_pair()
+            else:
+                errors["base"] = "cannot_connect"
 
         return self.async_show_form(
             step_id="user",
@@ -44,27 +70,43 @@ class HisenseVibeConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         """Handle the pairing step (PIN entry)."""
         errors = {}
         
-        # In a real scenario, we would trigger the PIN on TV here via MQTT
-        # For this version, we assume the user triggers it or it's already visible
-        
         if user_input is not None:
             pin = user_input["pin"]
-            # Here we would send the PIN via MQTT to authenticate
-            # For now, we'll finish the flow and assume success
             
-            return self.async_create_entry(
-                title=f"Hisense TV ({self.host})",
-                data={
-                    "host": self.host,
-                    "mac": self.mac,
-                    "pin": pin,
-                },
-            )
+            # Send the PIN to the TV to authenticate
+            def _send_pin(host, pin_code):
+                try:
+                    client = mqtt.Client(client_id="HomeAssistantVibePair")
+                    client.username_pw_set(DEFAULT_USER, DEFAULT_PASS)
+                    context = ssl.create_default_context(ssl.Purpose.SERVER_AUTH)
+                    context.check_hostname = False
+                    context.verify_mode = ssl.CERT_NONE
+                    client.tls_set_context(context)
+                    client.connect(host, DEFAULT_PORT)
+                    # Topic to send the authentication code
+                    client.publish("/remoteapp/tv/ui_service/HomeAssistant/actions/authenticationcode", 
+                                   json.dumps({"authNum": pin_code}))
+                    client.disconnect()
+                    return True
+                except Exception:
+                    return False
+
+            if await self.hass.async_add_executor_job(_send_pin, self.host, pin):
+                return self.async_create_entry(
+                    title=f"Hisense TV ({self.host})",
+                    data={
+                        "host": self.host,
+                        "mac": self.mac,
+                        "pin": pin,
+                    },
+                )
+            else:
+                errors["base"] = "invalid_auth"
 
         return self.async_show_form(
             step_id="pair",
             data_schema=vol.Schema({
-                vol.Required("pin"): str,
+                vol.Required("pin"): vol.All(str, vol.Length(min=4, max=4)),
             }),
             description_placeholders={"host": self.host},
             errors=errors,
