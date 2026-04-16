@@ -25,17 +25,17 @@ class HisenseVibeConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         """Handle the initial step."""
         errors = {}
         if user_input is not None:
-            self.host = user_input[\"host\"]
-            self.mac = user_input[\"mac\"]
+            self.host = user_input["host"]
+            self.mac = user_input["mac"]
             
             # Move to pairing step
             return await self.async_step_pair()
 
         return self.async_show_form(
-            step_id=\"user\",
+            step_id="user",
             data_schema=vol.Schema({
-                vol.Required(\"host\"): str,
-                vol.Required(\"mac\"): str,
+                vol.Required("host"): str,
+                vol.Required("mac"): str,
             }),
             errors=errors,
         )
@@ -48,24 +48,24 @@ class HisenseVibeConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         # For this version, we assume the user triggers it or it's already visible
         
         if user_input is not None:
-            pin = user_input[\"pin\"]
+            pin = user_input["pin"]
             # Here we would send the PIN via MQTT to authenticate
             # For now, we'll finish the flow and assume success
             
             return self.async_create_entry(
-                title=f\"Hisense TV ({self.host})\",
+                title=f"Hisense TV ({self.host})",
                 data={
-                    \"host\": self.host,
-                    \"mac\": self.mac,
-                    \"pin\": pin,
+                    "host": self.host,
+                    "mac": self.mac,
+                    "pin": pin,
                 },
             )
 
         return self.async_show_form(
-            step_id=\"pair\",
+            step_id="pair",
             data_schema=vol.Schema({
-                vol.Required(\"pin\"): str,
+                vol.Required("pin"): str,
             }),
-            description_placeholders={\"host\": self.host},
+            description_placeholders={"host": self.host},
             errors=errors,
         )

@@ -1,18 +1,18 @@
 """Constants for the Hisense Vibe integration."""
-DOMAIN = \"hisense_vibe\"
+DOMAIN = "hisense_vibe"
 
 DEFAULT_PORT = 36669
-DEFAULT_USER = \"hisenseservice\"
-DEFAULT_PASS = \"multimqttservice\"
+DEFAULT_USER = "hisenseservice"
+DEFAULT_PASS = "multimqttservice"
 
 # Standard Hisense sources
 SOURCES = {
-    \"HDMI1\": {\"sourceid\": \"1\", \"sourcename\": \"HDMI1\"},
-    \"HDMI2\": {\"sourceid\": \"2\", \"sourcename\": \"HDMI2\"},
-    \"HDMI3\": {\"sourceid\": \"3\", \"sourcename\": \"HDMI3\"},
-    \"HDMI4\": {\"sourceid\": \"4\", \"sourcename\": \"HDMI4\"},
-    \"AV\": {\"sourceid\": \"5\", \"sourcename\": \"AV\"},
-    \"TV\": {\"sourceid\": \"0\", \"sourcename\": \"TV\"},
+    "HDMI1": {"sourceid": "1", "sourcename": "HDMI1"},
+    "HDMI2": {"sourceid": "2", "sourcename": "HDMI2"},
+    "HDMI3": {"sourceid": "3", "sourcename": "HDMI3"},
+    "HDMI4": {"sourceid": "4", "sourcename": "HDMI4"},
+    "AV": {"sourceid": "5", "sourcename": "AV"},
+    "TV": {"sourceid": "0", "sourcename": "TV"},
 }
 
 # The certificate is required for TLS connection to the TV
