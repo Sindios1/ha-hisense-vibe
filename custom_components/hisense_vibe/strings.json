@@ -1,0 +1,29 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Hisense TV Host Setup",
+        "description": "Please enter the IP address and MAC address of your Hisense TV.",
+        "data": {
+          "host": "IP Address",
+          "mac": "MAC Address"
+        }
+      },
+      "pair": {
+        "title": "Pairing your Hisense TV",
+        "description": "Please enter the 4-digit PIN displayed on your TV screen ({host}).",
+        "data": {
+          "pin": "PIN Code"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Failed to connect to TV. Please check the IP address.",
+      "invalid_auth": "Invalid authentication PIN.",
+      "unknown": "Unexpected error occurred."
+    },
+    "abort": {
+      "already_configured": "Device is already configured"
+    }
+  }
+}

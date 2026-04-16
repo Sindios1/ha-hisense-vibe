@@ -1,0 +1,29 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Nastavení Hisense TV",
+        "description": "Zadejte prosím IP adresu a MAC adresu vaší televize Hisense.",
+        "data": {
+          "host": "IP Adresa",
+          "mac": "MAC Adresa"
+        }
+      },
+      "pair": {
+        "title": "Párování televize",
+        "description": "Zadejte čtyřmístný PIN kód, který se právě zobrazil na obrazovce vaší televize ({host}).",
+        "data": {
+          "pin": "PIN kód"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Nepodařilo se připojit k TV. Zkontrolujte IP adresu.",
+      "invalid_auth": "Neplatný PIN kód.",
+      "unknown": "Nastala neočekávaná chyba."
+    },
+    "abort": {
+      "already_configured": "Toto zařízení je již nastaveno."
+    }
+  }
+}

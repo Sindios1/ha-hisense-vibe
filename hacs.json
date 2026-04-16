@@ -1,0 +1,8 @@
+{
+  "name": "Hisense Vibe",
+  "content_type": "integration",
+  "homeassistant": "2023.1.0",
+  "zip_release": false,
+  "render_readme": true,
+  "filename": "custom_components/hisense_vibe"
+}
