@@ -1,4 +1,4 @@
-\"\"\"The Hisense Vibe integration.\"\"\"
+"""The Hisense Vibe integration."""
 from __future__ import annotations
 
 import logging
@@ -13,7 +13,7 @@ _LOGGER = logging.getLogger(__name__)
 PLATFORMS: list[Platform] = [Platform.MEDIA_PLAYER]
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
-    \"\"\"Set up Hisense Vibe from a config entry.\"\"\"
+    """Set up Hisense Vibe from a config entry."""
     hass.data.setdefault(DOMAIN, {})
     
     # Store the entry for the platforms to use
@@ -23,7 +23,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     return True
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
-    \"\"\"Unload a config entry.\"\"\"
+    """Unload a config entry."""
     if unload_ok := await hass.config_entries.async_unload_platforms(entry, PLATFORMS):
         hass.data[DOMAIN].pop(entry.entry_id)
 

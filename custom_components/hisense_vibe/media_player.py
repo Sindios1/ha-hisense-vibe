@@ -1,4 +1,4 @@
-\"\"\"Support for Hisense TV media player.\"\"\"
+"""Support for Hisense TV media player."""
 from __future__ import annotations
 
 import json
@@ -26,14 +26,14 @@ async def async_setup_entry(
     entry: ConfigEntry,
     async_add_entities: AddEntitiesCallback,
 ) -> None:
-    \"\"\"Set up the Hisense TV platform.\"\"\"
+    """Set up the Hisense TV platform."""
     async_add_entities([HisenseVibeEntity(entry)], True)
 
 class HisenseVibeEntity(MediaPlayerEntity):
-    \"\"\"Representation of a Hisense TV.\"\"\"
+    """Representation of a Hisense TV."""
 
     def __init__(self, entry: ConfigEntry) -> None:
-        \"\"\"Initialize the TV entity.\"\"\"
+        """Initialize the TV entity."""
         self._entry = entry
         self._host = entry.data[\"host\"]
         self._mac = entry.data[\"mac\"]
@@ -56,7 +56,7 @@ class HisenseVibeEntity(MediaPlayerEntity):
         self._attr_source_list = list(SOURCES.keys())
 
     def _get_mqtt_client(self):
-        \"\"\"Create and return a configured MQTT client.\"\"\"
+        """Create and return a configured MQTT client."""
         client = mqtt.Client(client_id=\"HomeAssistantVibe\")
         client.username_pw_set(DEFAULT_USER, DEFAULT_PASS)
         
@@ -76,7 +76,7 @@ class HisenseVibeEntity(MediaPlayerEntity):
         return client
 
     def send_command(self, topic, payload):
-        \"\"\"Send a command to the TV via MQTT.\"\"\"
+        """Send a command to the TV via MQTT."""
         try:
             client = self._get_mqtt_client()
             client.connect(self._host, DEFAULT_PORT)
@@ -86,34 +86,34 @@ class HisenseVibeEntity(MediaPlayerEntity):
             _LOGGER.error(\"Failed to send command to Hisense TV: %s\", ex)
 
     async def async_turn_on(self) -> None:
-        \"\"\"Turn the media player on.\"\"\"
+        """Turn the media player on."""
         wake_on_lan.send_magic_packet(self._mac)
         self._state = MediaPlayerState.ON
 
     async def async_turn_off(self) -> None:
-        \"\"\"Turn the media player off.\"\"\"
+        """Turn the media player off."""
         self.send_command(\"/remoteapp/tv/ui_service/HomeAssistant/actions/key\", {\"key\": \"KEY_POWER\"})
         self._state = MediaPlayerState.OFF
 
     async def async_volume_up(self) -> None:
-        \"\"\"Volume up the media player.\"\"\"
+        """Volume up the media player."""
         self.send_command(\"/remoteapp/tv/ui_service/HomeAssistant/actions/key\", {\"key\": \"KEY_VOLUMEUP\"})
 
     async def async_volume_down(self) -> None:
-        \"\"\"Volume down the media player.\"\"\"
+        """Volume down the media player."""
         self.send_command(\"/remoteapp/tv/ui_service/HomeAssistant/actions/key\", {\"key\": \"KEY_VOLUMEDOWN\"})
 
     async def async_mute_volume(self, mute: bool) -> None:
-        \"\"\"Mute the volume.\"\"\"
+        """Mute the volume."""
         self.send_command(\"/remoteapp/tv/ui_service/HomeAssistant/actions/key\", {\"key\": \"KEY_MUTE\"})
 
     async def async_select_source(self, source: str) -> None:
-        \"\"\"Select input source.\"\"\"
+        """Select input source."""
         if source in SOURCES:
             payload = SOURCES[source]
             self.send_command(\"/remoteapp/tv/ui_service/HomeAssistant/actions/changesource\", payload)
 
     @property
     def state(self) -> MediaPlayerState:
-        \"\"\"Return the state of the TV.\"\"\"
+        """Return the state of the TV."""
         return self._state

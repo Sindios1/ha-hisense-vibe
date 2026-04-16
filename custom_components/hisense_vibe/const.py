@@ -1,4 +1,4 @@
-\"\"\"Constants for the Hisense Vibe integration.\"\"\"
+"""Constants for the Hisense Vibe integration."""
 DOMAIN = \"hisense_vibe\"
 
 DEFAULT_PORT = 36669
@@ -17,7 +17,7 @@ SOURCES = {
 
 # The certificate is required for TLS connection to the TV
 # These are standard certificates extracted from Hisense RemoteNow apps
-CERT_PEM = \"\"\"-----BEGIN CERTIFICATE-----
+CERT_PEM = """-----BEGIN CERTIFICATE-----
 MIIDATCCAemgAwIBAgIUW6o9bYl+2Lw/Z5lUeA7q7qZ6OAUwDQYJKoZIhvcNAQEL
 BQAwFDESMBAGA1UEAwwJSGlzZW5zZVRWMB4XDTE5MTExMjEwNDQ1OFoXDTQ5MTEw
 NDEwNDQ1OFowFDESMBAGA1UEAwwJSGlzZW5zZVRWMIIBIjANBgkqhkiG9w0BAQE
@@ -33,4 +33,4 @@ qZ6OAUlPy7qZ6OAUlPy7qZ6OAUlPy7qZ6OAUlPy7qZ6OAUlPy7qZ6OAUlPy7qZ
 6OAUlPy7qZ6OAUlPy7qZ6OAUlPy7qZ6OAUlPy7qZ6OAUlPy7qZ6OAUlPy7qZ6O
 AUlPy7qZ6OAUlPy7qZ6OAUlPy7qZ6OAUlPy7qZ6OAUlPy7qZ6OAUlPy7qZ6OAU
 lPy7qZ6OAUlPy7qZ6OAUlPy7qZ6OAUlPy7qZ6OAU=
------END CERTIFICATE-----\"\"\"
+-----END CERTIFICATE-----"""

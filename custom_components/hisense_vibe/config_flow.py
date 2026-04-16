@@ -1,4 +1,4 @@
-\"\"\"Config flow for Hisense Vibe integration.\"\"\"
+"""Config flow for Hisense Vibe integration."""
 from __future__ import annotations
 
 import logging
@@ -12,17 +12,17 @@ from .const import DOMAIN
 _LOGGER = logging.getLogger(__name__)
 
 class HisenseVibeConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
-    \"\"\"Handle a config flow for Hisense Vibe.\"\"\"
+    """Handle a config flow for Hisense Vibe."""
 
     VERSION = 1
 
     def __init__(self):
-        \"\"\"Initialize the config flow.\"\"\"
+        """Initialize the config flow."""
         self.host = None
         self.mac = None
 
     async def async_step_user(self, user_input=None) -> FlowResult:
-        \"\"\"Handle the initial step.\"\"\"
+        """Handle the initial step."""
         errors = {}
         if user_input is not None:
             self.host = user_input[\"host\"]
@@ -41,7 +41,7 @@ class HisenseVibeConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         )
 
     async def async_step_pair(self, user_input=None) -> FlowResult:
-        \"\"\"Handle the pairing step (PIN entry).\"\"\"
+        """Handle the pairing step (PIN entry)."""
         errors = {}
         
         # In a real scenario, we would trigger the PIN on TV here via MQTT
