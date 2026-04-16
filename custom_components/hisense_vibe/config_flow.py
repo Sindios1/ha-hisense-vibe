@@ -25,9 +25,10 @@ class HisenseVibeConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         self.mac = None
 
     def _trigger_pin(self, host):
-        """Connect to TV and trigger the PIN display."""
+        """Connect to TV and trigger the PIN display by sending multiple common trigger commands."""
         try:
-            client = mqtt.Client(client_id="HomeAssistantVibePair")
+            # We use a client ID that is more likely to be accepted (generic but official-looking)
+            client = mqtt.Client(client_id="HomeAssistant")
             client.username_pw_set(DEFAULT_USER, DEFAULT_PASS)
             
             context = ssl.create_default_context(ssl.Purpose.SERVER_AUTH)
@@ -35,9 +36,17 @@ class HisenseVibeConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             context.verify_mode = ssl.CERT_NONE
             client.tls_set_context(context)
             
-            client.connect(host, DEFAULT_PORT)
-            # Standard topic to trigger PIN display
+            client.connect(host, DEFAULT_PORT, keepalive=60)
+            
+            # 1. Standard trigger
             client.publish("/remoteapp/tv/ui_service/HomeAssistant/actions/get_pin", "{}")
+            
+            # 2. Alternative trigger (requesting state often wakes up the PIN logic)
+            client.publish("/remoteapp/tv/ui_service/HomeAssistant/actions/gettvstate", "{}")
+            
+            # 3. Some models need a specific auth type payload
+            client.publish("/remoteapp/tv/ui_service/HomeAssistant/actions/get_pin", json.dumps({"auth_type": 1}))
+            
             client.disconnect()
             return True
         except Exception as ex:
@@ -73,17 +82,16 @@ class HisenseVibeConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         if user_input is not None:
             pin = user_input["pin"]
             
-            # Send the PIN to the TV to authenticate
             def _send_pin(host, pin_code):
                 try:
-                    client = mqtt.Client(client_id="HomeAssistantVibePair")
+                    client = mqtt.Client(client_id="HomeAssistant")
                     client.username_pw_set(DEFAULT_USER, DEFAULT_PASS)
                     context = ssl.create_default_context(ssl.Purpose.SERVER_AUTH)
                     context.check_hostname = False
                     context.verify_mode = ssl.CERT_NONE
                     client.tls_set_context(context)
                     client.connect(host, DEFAULT_PORT)
-                    # Topic to send the authentication code
+                    # Use the standard pairing topic
                     client.publish("/remoteapp/tv/ui_service/HomeAssistant/actions/authenticationcode", 
                                    json.dumps({"authNum": pin_code}))
                     client.disconnect()
